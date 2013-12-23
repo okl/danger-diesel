@@ -43,16 +43,12 @@
     (simple-interp (first args))
     (apply @(resolve op) (map simple-interp args))))
 
-;;(def external-defed-var 10)
-
 (deftest simple-interp-test
   (testing "A small interpreter..."
     (testing "symbol look up"
       (is (= 13 (simple-interp '(add 6 7)))))
     (testing "inner recursive interpretation"
       (is (= 11 (simple-interp '(add 6 (sub 10 5))))))
-    ;; (testing "the use of externally defined variables"
-    ;;   (= 16 (simple-interp '(add 6 external-defed-var))))
     (testing "using a predicate to look up a function"
       (is (= 31
              (simple-interp

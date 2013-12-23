@@ -43,7 +43,7 @@ and effectively turns `[a => b]` into `[a b]`."
              :const-value)))
        (defmethod ~name :const-value ~expr+formals
          (if (symbol? ~'expr)
-           @(resolve ~'expr)
+           (name ~'expr)
            ~'expr))
        (defmethod ~name :unknown-operator ~expr+formals
          (throw
