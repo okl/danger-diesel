@@ -34,44 +34,6 @@ Currently there is an example usage [here](test/diesel/core_test.clj)
 and the example illustrated by the afore mentioned blog post is
 implemented [here](test/diesel/growing/a_dsl_with_clojure.clj):
 
-### Caveats
-#### Developing with nrepl
-
-One of the poor side effects of using multimethods is that their
-redefinition is quite tricky for Clojure to deal with.  This means
-that if we use `definterpter` to define a small DSL as follows:
-
-```
-(definterpreter simple-interp []
-  ['add => :add]
-  ['sub => :sub]
-	...)
-```
-
-... then we decide we want to add some additional functions like so:
-
-```
-(definterpreter simple-interp []
-  ['add => :add]
-  ['sub => :sub]
-  ['div => :div]
-  ['mult => :mult]
-	...)
-```
-
-... we can't simply re-evaluate the buffer or expression. we have to, in
-fact, kill the nrepl-server and restart the process.
-
-You can, however, redefine the `defmethod` portions at will and
-re-evaluate.
-
-At some point, I will try to address this, but for now, I think it's
-important to just be aware you cannot expand your language (or make
-alterations) without bouncing your clojure process.
-
-
-
-
 
 
 ## License

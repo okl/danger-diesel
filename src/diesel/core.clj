@@ -35,6 +35,7 @@ and effectively turns `[a => b]` into `[a b]`."
         ;; and issues, and lets us change our dispatching algorithm.
         expr-interp ordered-expr-interp]
     `(do
+       (def ~name nil) ;; resets the binding should we be re-evaluating
        (defmulti ~name
          (fn ~'intepreter-fn ~expr+formals
            (if (list? ~'expr)

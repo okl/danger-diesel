@@ -1,4 +1,4 @@
-(defproject com.onekingslane.danger/diesel "1.0.0"
+(defproject com.onekingslane.danger/diesel "1.0.1"
   :description "Diesel! The DSL building engine!"
   :url "http://www.github.com/okl/danger-diesel"
   :license {:name "Eclipse Public License"
