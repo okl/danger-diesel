@@ -19,9 +19,6 @@ Currently diesel provides small, but useful improvement over above:
 3. Default constant handling
 4. Default unknown operator handling
 
-Currently, however, I haven't tested it with dynamic vars, though I
-imagine it will work. That's on the [todo list](TODO.md)
-
 
 ## Usage
 ### Get
@@ -29,11 +26,14 @@ imagine it will work. That's on the [todo list](TODO.md)
 In your project.clj add
 
 ```
-[com.onekingslane.danger/diesel "0.1.0"]
+[com.onekingslane.danger/diesel "1.0.0"]
 ```
 
 ### Use
 Currently there is an example usage [here](test/diesel/core_test.clj)
+and the example illustrated by the afore mentioned blog post is
+implemented [here](test/diesel/growing/a_dsl_with_clojure.clj):
+
 
 
 ## License
