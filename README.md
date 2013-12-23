@@ -8,6 +8,6 @@ FIXME
 
 ## License
 
-Copyright © 2013 FIXME
+Copyright © 2013 One Kings Lane
 
 Distributed under the Eclipse Public License, the same as Clojure.
