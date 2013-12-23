@@ -2,45 +2,64 @@
   (:use clojure.test
         diesel.core))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Testing the simpliest, basic intepreter!
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def special-ops #{'+ '- '/ '*})
 
 (defn special-op? [expr]
   (special-ops (first expr)))
 
-(definterp my-interp []
+(definterp simple-interp []
   ['add => :add]
   ['sub => :sub]
   ['div => :div]
+  ['mult => :mult]
   [special-op? => :special-op])
 
-(defmethod my-interp :add [[_ & args]]
-  (apply +  (map my-interp args)))
+;; Look, you can destructure the args!
+(defmethod simple-interp :add [[_ & args]]
+  (apply +  (map simple-interp args)))
 
-(defmethod my-interp :sub [[_ & args]]
+(defmethod simple-interp :sub [[_ & args]]
   (if (= (count args) 1)
-    (my-interp (first args))
-    (apply - (map my-interp args))))
+    (simple-interp (first args))
+    (apply - (map simple-interp args))))
 
-(defmethod my-interp :div [[_ dividend divisor]]
+;; Fixed argument destructuring!
+(defmethod simple-interp :div [[_ dividend divisor]]
   (/ dividend divisor))
 
-(defmethod my-interp :special-op [[op & args]]
+;; This function demonstrates no destructuring
+(defmethod simple-interp :mult [expr]
+  (let [op (first expr)
+        args (rest expr)]
+    (apply * args)))
+
+;; ah, look! We can refer to the op, even when destructuring
+(defmethod simple-interp :special-op [[op & args]]
   (if (= (count args) 1)
-    (my-interp (first args))
-    (apply @(resolve op) (map my-interp args))))
+    (simple-interp (first args))
+    (apply @(resolve op) (map simple-interp args))))
 
+;;(def external-defed-var 10)
 
-(def x 10)
-(my-interp '(add 6 7))
-(my-interp '(add 6 x))
-
-(my-interp '(+ 25 (add 6 (sub 10 x))))
-
-(my-interp '(add 26))
-
-(my-interp '(div 10 20))
+(deftest simple-interp-test
+  (testing "A small interpreter..."
+    (testing "symbol look up"
+      (is (= 13 (simple-interp '(add 6 7)))))
+    (testing "inner recursive interpretation"
+      (is (= 11 (simple-interp '(add 6 (sub 10 5))))))
+    ;; (testing "the use of externally defined variables"
+    ;;   (= 16 (simple-interp '(add 6 external-defed-var))))
+    (testing "using a predicate to look up a function"
+      (is (= 31
+             (simple-interp
+              '(+ 25 (add 6 (sub 10 10)))))))
+    (testing "using a predicate to look up a function"
+      (is (= 125 (simple-interp '(mult 5 5 5)))))
+    (testing "a constant"
+      (is (= 5 (simple-interp 5))))
+    (testing "an undefined operator"
+      (is (thrown? RuntimeException (simple-interp '(+ 5 (yourmom 10))))))))

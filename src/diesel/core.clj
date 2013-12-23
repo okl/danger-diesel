@@ -30,12 +30,15 @@ and effectively turns `[a => b]` into `[a b]`."
 
 (defmacro definterp [name formals & dispatch-mappings]
   (let [dispatch-mappings (vec (map remove-dispatch-form-cruft dispatch-mappings))
-        expr+formals (vec (cons 'expr formals))]
+        expr+formals (vec (cons 'expr formals))
+        ;; this rebinding prevents needing to export ordered-expr-interp
+        ;; and issues, and lets us change our dispatching algorithm.
+        expr-interp ordered-expr-interp]
     `(do
        (defmulti ~name
          (fn ~'intepreter-fn ~expr+formals
            (if (list? ~'expr)
-             (or (ordered-expr-interp ~'expr ~dispatch-mappings)
+             (or (~expr-interp ~'expr ~dispatch-mappings)
                  :unknown-operator)
              :const-value)))
        (defmethod ~name :const-value ~expr+formals
@@ -43,5 +46,7 @@ and effectively turns `[a => b]` into `[a b]`."
            @(resolve ~'expr)
            ~'expr))
        (defmethod ~name :unknown-operator ~expr+formals
-         (str "Unknown handler for `" ~'expr
-              "` when handling `" ~'expr "`")))))
+         (throw
+          (RuntimeException.
+           (str "Unknown handler for `" ~'expr
+                "` when handling `" ~'expr "`")))))))
