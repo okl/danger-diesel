@@ -11,7 +11,7 @@
 (defn special-op? [expr]
   (special-ops (first expr)))
 
-(definterp simple-interp []
+(definterpreter simple-interp []
   ['add => :add]
   ['sub => :sub]
   ['div => :div]

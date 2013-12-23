@@ -28,7 +28,7 @@ and effectively turns `[a => b]` into `[a b]`."
           d-val
           (recur (next op-fns=>ds)))))))
 
-(defmacro definterp [name formals & dispatch-mappings]
+(defmacro definterpreter [name formals & dispatch-mappings]
   (let [dispatch-mappings (vec (map remove-dispatch-form-cruft dispatch-mappings))
         expr+formals (vec (cons 'expr formals))
         ;; this rebinding prevents needing to export ordered-expr-interp
