@@ -1,3 +1,9 @@
+# 1.0.3
+
+Forms may now be conses or lists BUT NOT VECTORS.
+
+Allowing forms to be vectors was interfering with vector literals.
+
 # 1.0.2
 
 Forms may now be conses or vectors, not just lists.

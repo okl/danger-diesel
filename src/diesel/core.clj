@@ -5,8 +5,7 @@
   (:use [roxxi.utils.print]))
 
 (defmacro seqish? [thing]
-  `(or (seq? ~thing)
-       (vector? ~thing)))
+  `(seq? ~thing))
 
 (defn- of-form? [fn-or-op expr]
   (if (fn? fn-or-op)
