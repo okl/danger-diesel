@@ -4,10 +4,14 @@
    :date "12/22/2013"}
   (:use [roxxi.utils.print]))
 
+(defmacro seqish? [thing]
+  `(or (seq? ~thing)
+       (vector? ~thing)))
+
 (defn- of-form? [fn-or-op expr]
   (if (fn? fn-or-op)
     (fn-or-op expr)
-    (and (list? expr)
+    (and (seqish? expr)
          (not (empty? expr))
          (= (first expr) fn-or-op))))
 
@@ -38,7 +42,7 @@ and effectively turns `[a => b]` into `[a b]`."
        (def ~name nil) ;; resets the binding should we be re-evaluating
        (defmulti ~name
          (fn ~'intepreter-fn ~expr+formals
-           (if (list? ~'expr)
+           (if (seqish? ~'expr)
              (or (~expr-interp ~'expr ~dispatch-mappings)
                  :unknown-operator)
              :const-value)))

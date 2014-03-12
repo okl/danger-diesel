@@ -58,4 +58,12 @@
     (testing "a constant"
       (is (= 5 (simple-interp 5))))
     (testing "an undefined operator"
-      (is (thrown? RuntimeException (simple-interp '(+ 5 (yourmom 10))))))))
+      (is (thrown? RuntimeException (simple-interp '(+ 5 (yourmom 10)))))))
+  (testing "Identifies unknown handlers that are"
+    (testing "conses"
+      (is (thrown? RuntimeException (simple-interp (cons 'bar '(hootenanny)))))
+      (is (thrown? RuntimeException (simple-interp (list* 'baz '(hootenanny))))))
+    (testing "vectors"
+      (is (thrown? RuntimeException (simple-interp (vector 'baz 'hootenanny)))))
+    (testing "lists"
+      (is (thrown? RuntimeException (simple-interp (apply list (cons 'baz '(hootenanny)))))))))
