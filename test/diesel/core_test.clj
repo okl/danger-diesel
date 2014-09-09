@@ -63,8 +63,6 @@
     (testing "conses"
       (is (thrown? RuntimeException (simple-interp (cons 'bar '(hootenanny)))))
       (is (thrown? RuntimeException (simple-interp (list* 'baz '(hootenanny))))))
-    (testing "vectors"
-      (is (thrown? RuntimeException (simple-interp (vector 'baz 'hootenanny)))))
     (testing "lists"
       (is (thrown? RuntimeException (simple-interp (apply list (cons 'baz '(hootenanny)))))))))
 
