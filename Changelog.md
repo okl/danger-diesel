@@ -1,3 +1,8 @@
+# 1.1.0
+
+Added denamespace-form, which makes syntax-quote play nice with diesel
+interpreters.
+
 # 1.0.3
 
 Forms may now be conses or lists BUT NOT VECTORS.

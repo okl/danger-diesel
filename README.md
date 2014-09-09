@@ -26,7 +26,7 @@ Currently Diesel provides small, but useful improvement over above:
 In your project.clj add
 
 ```
-[com.onekingslane.danger/diesel "1.0.0"]
+[com.onekingslane.danger/diesel "1.1.0"]
 ```
 
 ### Use
