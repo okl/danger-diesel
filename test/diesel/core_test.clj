@@ -67,3 +67,36 @@
       (is (thrown? RuntimeException (simple-interp (vector 'baz 'hootenanny)))))
     (testing "lists"
       (is (thrown? RuntimeException (simple-interp (apply list (cons 'baz '(hootenanny)))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Testing denamespace-form
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(deftest denamespace-form-test
+  (let [val 42
+        f `(a b (c (d nil + 7 :e) "str" ~val))]
+    (testing "Demonstrating that syntax-quote really does add ns-qualifications"
+      (is (= f
+             '(diesel.core-test/a
+               diesel.core-test/b
+               (diesel.core-test/c (diesel.core-test/d nil
+                                                       clojure.core/+
+                                                       7
+                                                       :e)
+                                   "str"
+                                   42)))))
+    (testing "denamespace-form"
+      (testing "works on a single symbol"
+        (is (= (denamespace-form 'diesel.core-test/c) 'c)))
+      (testing "doesn't break on things that aren't fully-qualified symbols"
+        (is (= (denamespace-form nil) nil))
+        (is (= (denamespace-form :a) :a))
+        (is (= (denamespace-form []) []))
+        (is (= (denamespace-form [{} '()]) [{} '()]))
+        (is (= (denamespace-form 42) 42))
+        (is (= (denamespace-form "42") "42"))
+        (is (= (denamespace-form 'b) 'b))
+        (is (= (denamespace-form '42) '42)))
+      (testing "walks into nested forms"
+        (is (= (denamespace-form f)
+               '(a b (c (d nil + 7 :e) "str" 42))))))))

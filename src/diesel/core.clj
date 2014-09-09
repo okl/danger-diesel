@@ -2,7 +2,8 @@
   "A small _diesel_ engine to build your own DSLs!"
   {:author "Alex Bahouth"
    :date "12/22/2013"}
-  (:use [roxxi.utils.print]))
+  (:require [roxxi.utils.print :refer [print-expr]])
+  (:require [roxxi.utils.collections :refer [walk-apply]]))
 
 (defmacro seqish? [thing]
   `(seq? ~thing))
@@ -31,6 +32,8 @@ and effectively turns `[a => b]` into `[a b]`."
           d-val
           (recur (next op-fns=>ds)))))))
 
+;; # The money
+
 (defmacro definterpreter [name formals & dispatch-mappings]
   (let [dispatch-mappings (vec (map remove-dispatch-form-cruft dispatch-mappings))
         expr+formals (vec (cons 'expr formals))
@@ -54,3 +57,34 @@ and effectively turns `[a => b]` into `[a b]`."
           (RuntimeException.
            (str "Unknown handler for `" ~'expr
                 "` when handling `" ~'expr "`")))))))
+
+;; # Convenience functions
+
+(defn- denamespace-symbol
+  "For symbols that are fully namespace-qualified, removes the namespace
+  qualification. For all other objects, returns the object unmodified."
+  [thing]
+  (if (symbol? thing)
+    (symbol (name thing))
+    thing))
+
+(defn denamespace-form
+  "Walks an entire form, denamespacing any symbols it finds.
+
+  You would use this when you've used syntax-quote (`) to build up a form
+  for the interpreter. While syntax-quote is very convenient (since it allows
+  unquoting), it has the side-effect of fully namespace-resolving all symbols.
+
+  Thus, `(my-interp (language-elem ...)) becomes
+  '(my-ns/my-interp (my-ns/language-elem ...)), which is not parsable by your
+  interpreter.
+
+  denamespace-form would remove all namespace-qualifications on all the symbols
+  in the syntax-quoted form, allowing you to use syntax-quoting when working with
+  diesel interpreters.
+    (denamespace-form '(my-ns/my-interp (my-ns/language-elem ...)))
+     => '(my-interp (language-elem ...))
+
+  That's what this function is for."
+  [form]
+  (walk-apply form denamespace-symbol))
